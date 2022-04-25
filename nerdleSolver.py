@@ -1,17 +1,13 @@
-from solvingHelpers import findSolutions
+from solvingHelpers import produceVariations, isValidVariation
 
-def func(a,b,c,d):
-    return((10*a+b)-(10*c+d))
+func = "xx/x-x=5"
+mustUseNums = [3,6]
+cantUseNums = [1,2,7,8,9]
 
-def strFunc(result,a,b,c,d):
-    return(f"{a}{b}-{c}{d}={result}")
+variations = produceVariations(mustUseNums, cantUseNums, func)
 
-mustUseNums = [3,4,5,6,9]
-cantUseNums = [1,2,7,8]
-findSolutions(
-    mustUseNums, 
-    cantUseNums, 
-    strFunc, 
-    func, 
-    2, 
-    ())
+validVariations = []
+for variation in variations:
+    if isValidVariation(variation):
+        validVariations.append(variations)
+        print(variation)
