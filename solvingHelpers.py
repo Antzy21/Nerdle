@@ -99,11 +99,17 @@ def produceVariations(mustUseNums: list[int], cantUseNums: list[int], func: str)
     
     return variations
     
-def isValidVariation(func: str) -> bool:
+def isValidVariation(func: str, positionalConditions: list[tuple]) -> bool:
     eqSignIdx = func.find('=')
     if eqSignIdx == -1:
         print("Error: no equal sign found")
         return False
+    
+    for positionalCond in positionalConditions:
+            index = positionalCond[0]
+            if func[index] == positionalCond[1]:
+                return False
+    
     equation, result = func[0:eqSignIdx], func[eqSignIdx+1:len(func)]
     result = int(result)
     

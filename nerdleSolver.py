@@ -1,13 +1,24 @@
 from solvingHelpers import produceVariations, isValidVariation
 
-func = "xx/x-x=5"
-mustUseNums = [3,6]
-cantUseNums = [1,2,7,8,9]
+func = "xx-xx=xx"
+mustUseNums = [1,5,7,8,9]
+cantUseNums = [2,6]
 
 variations = produceVariations(mustUseNums, cantUseNums, func)
 
+positionalConditions = [
+    (0, "9"),
+    (0, "7"),
+    (1, "9"),
+    (4, "7"),
+    (4, "8"),
+    (7, "5"),
+    (7, "1"),
+]
+
 validVariations = []
 for variation in variations:
-    if isValidVariation(variation):
+    if isValidVariation(variation, positionalConditions):
         validVariations.append(variations)
-        print(variation)
+        print(variation)            
+        
