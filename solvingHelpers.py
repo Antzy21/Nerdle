@@ -44,20 +44,20 @@ def createResult(
             variations.extend(createResult(newoptions, length-1, newValue))
     return variations
             
-def findSolutions(mustUseNums, cantUseNums, strFunc, func, resultLength=1, *args):
+def findSolutions(mustUse, cantUse, strFunc, func, resultLength=1, *args):
     
     # Error handling:
-    for numList in [mustUseNums, cantUseNums]:
+    for numList in [mustUse, cantUse]:
         for n in numList:
             if not 0<n<10:
                 print("Error: number lists invalid")
                 return
     
     lenFuncParams = len(func.__code__.co_varnames)
-    if lenFuncParams+resultLength == len(mustUseNums)+len(*args):
-        options = mustUseNums
+    if lenFuncParams+resultLength == len(mustUse)+len(*args):
+        options = mustUse
     else:
-        options = list(filter(lambda x: x not in cantUseNums, range(1,10)))
+        options = list(filter(lambda x: x not in cantUse, range(1,10)))
     
     if lenFuncParams == len(*args):
         result = func(*args[0])
@@ -68,34 +68,34 @@ def findSolutions(mustUseNums, cantUseNums, strFunc, func, resultLength=1, *args
         for i in options:
             newArgs = addToArgs(args, i)            
             
-            newMustUseNums = mustUseNums[:]
-            if i in newMustUseNums:
-                newMustUseNums.remove(i)
+            newMustUse = mustUse[:]
+            if i in newMustUse:
+                newMustUse.remove(i)
             
-            findSolutions(newMustUseNums, cantUseNums, strFunc, func, resultLength, newArgs)
+            findSolutions(newMustUse, cantUse, strFunc, func, resultLength, newArgs)
             
 def isSlot(c):
     return c == 'x'
             
-def produceVariations(mustUseNums: list[int], cantUseNums: list[int], func: str) -> list[str]:
+def produceVariations(mustUse: list[int], cantUse: list[int], func: str) -> list[str]:
     numSlots = len(list(filter(isSlot, func)))
     if numSlots == 0:
         return [func]
-    elif numSlots == len(mustUseNums):
-        options = mustUseNums
+    elif numSlots == len(mustUse):
+        options = mustUse
     else:
-        options = list(filter(lambda x: x not in cantUseNums, range(1,10)))
+        options = list(filter(lambda x: x not in cantUse, range(1,10)))
     
     variations = []
     for n in options:
         i = func.find('x')
         newFunc = f"{func[0:i]}{n}{func[i+1:len(func)]}"
         
-        newMustUseNums = mustUseNums[:]
-        if n in newMustUseNums:
-            newMustUseNums.remove(n)
+        newMustUse = mustUse[:]
+        if n in newMustUse:
+            newMustUse.remove(n)
             
-        variations.extend(produceVariations(newMustUseNums, cantUseNums, newFunc))
+        variations.extend(produceVariations(newMustUse, cantUse, newFunc))
     
     return variations
     

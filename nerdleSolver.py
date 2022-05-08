@@ -1,10 +1,10 @@
 from solvingHelpers import produceVariations, isValidVariation
 
 func = "xx-xx=xx"
-mustUseNums = [1,5,7,8,9]
-cantUseNums = [2,6]
+mustUse = [1,5,7,8,9]
+cantUse = [2,6]
 
-variations = produceVariations(mustUseNums, cantUseNums, func)
+variations = produceVariations(mustUse, cantUse, func)
 
 positionalConditions = [
     (0, "9"),
