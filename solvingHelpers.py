@@ -78,19 +78,41 @@ allOptions = list(range(1,10))
 operations = ["+","-","*","/","="]
 allOptions.extend(operations)
 
+def optionMustBeNum(func: str):
+    x = func.find('x')
+    if x == 0 or x == len(func):
+        return True
+    if '=' in func:
+        return True
+    try:
+        int(func[x-1])
+        return False
+    except:
+        return True
+
+def getOptions(mustUse: list[int], cantUse: list[int], numSlots, func: str) -> list:
+    if '=' not in func and func.find('x') == len(func)-2:
+        return ['=']
+    options = allOptions
+    if numSlots == len(mustUse):
+        options = mustUse
+    if optionMustBeNum(func):
+        options = list(filter(lambda x: x in range(1,10), options))
+    options = list(filter(lambda x: x not in cantUse, options))
+    return options    
+
 def produceVariations(mustUse: list[int], cantUse: list[int], func: str) -> list[str]:
+
     numSlots = len(list(filter(lambda c: c == 'x', func)))
     if numSlots == 0:
         return [func]
-    elif numSlots == len(mustUse):
-        options = mustUse
-    else:
-        options = list(filter(lambda x: x not in cantUse, allOptions))
+    
+    options = getOptions(mustUse, cantUse, numSlots, func)
     
     variations = []
     for n in options:
-        i = func.find('x')
-        newFunc = f"{func[0:i]}{n}{func[i+1:len(func)]}"
+        x = func.find('x')
+        newFunc = f"{func[0:x]}{n}{func[x+1:len(func)]}"
         
         newMustUse = mustUse[:]
         if n in newMustUse:
