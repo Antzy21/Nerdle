@@ -74,15 +74,12 @@ def findSolutions(mustUse, cantUse, strFunc, func, resultLength=1, *args):
             
             findSolutions(newMustUse, cantUse, strFunc, func, resultLength, newArgs)
             
-def isSlot(c):
-    return c == 'x'
-            
 allOptions = list(range(1,10))
 operations = ["+","-","*","/","="]
 allOptions.extend(operations)
 
 def produceVariations(mustUse: list[int], cantUse: list[int], func: str) -> list[str]:
-    numSlots = len(list(filter(isSlot, func)))
+    numSlots = len(list(filter(lambda c: c == 'x', func)))
     if numSlots == 0:
         return [func]
     elif numSlots == len(mustUse):
