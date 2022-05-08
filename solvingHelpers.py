@@ -78,7 +78,8 @@ def isSlot(c):
     return c == 'x'
             
 allOptions = list(range(1,10))
-allOptions.extend(["+","-","*","/","="])
+operations = ["+","-","*","/","="]
+allOptions.extend(operations)
 
 def produceVariations(mustUse: list[int], cantUse: list[int], func: str) -> list[str]:
     numSlots = len(list(filter(isSlot, func)))
@@ -102,23 +103,53 @@ def produceVariations(mustUse: list[int], cantUse: list[int], func: str) -> list
     
     return variations
     
-def isValidVariation(func: str, positionalConditions: list[tuple]) -> bool:
+def funcHasEqualSign(func: str) -> bool:
     eqSignIdx = func.find('=')
-    if eqSignIdx == -1:
-        #Error: no equal sign found
-        return False
+    return eqSignIdx != -1
     
-    for positionalCond in positionalConditions:
-            index = positionalCond[0]
-            if func[index] == positionalCond[1]:
-                return False
-    
-    equation, result = func[0:eqSignIdx], func[eqSignIdx+1:len(func)]
+def rhsOfEquationIsNum(func: str) -> bool:
+    eqSignIdx = func.find('=')
+    result = func[eqSignIdx+1:len(func)]
     try:
         result = int(result)
+        return True
     except:
-        #Error: rhs of equation not a number
         return False
+    
+def operationsAreSurroundedByNums(func: str) -> bool:
+    for o in operations:
+        oPos = func.find(o)
+        if oPos in [0, len(func)]:
+            return False
+        if oPos != -1:
+            try:
+                int(func[oPos-1])
+                int(func[oPos+1])
+            except:
+                return False
+    return True
+    
+def isSensible(func: str) -> bool:
+    if not funcHasEqualSign(func):
+        return False
+    elif not rhsOfEquationIsNum(func):
+        return False
+    elif not operationsAreSurroundedByNums(func):
+        return False
+    else:
+        return True
+    
+def isValidWithPositionalConditions(func: str, positionalConditions: list[tuple]) -> bool:
+    for positionalCond in positionalConditions:
+        index = positionalCond[0]
+        if func[index] == positionalCond[1]:
+            return False
+    return True    
+    
+def isCorrect(func: str) -> bool:
+    
+    eqSignIdx = func.find('=')
+    equation, result = func[0:eqSignIdx], int(func[eqSignIdx+1:len(func)])
     
     equationList = [0]
     for c in equation:
@@ -130,10 +161,6 @@ def isValidVariation(func: str, positionalConditions: list[tuple]) -> bool:
                 equationList.append(i)
         except:
             equationList.append(c)
-    
-    if len(equationList) % 2 == 0:
-        #Error: left hand side of equation incorrect.
-        return False
     
     while len(equationList) != 1:
         for sign in ['*', '/', '+', '-']:

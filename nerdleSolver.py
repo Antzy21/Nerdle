@@ -1,24 +1,15 @@
-from solvingHelpers import produceVariations, isValidVariation
+from solvingHelpers import isSensible, isCorrect, produceVariations
 
-func = "xx-xx=xx"
-mustUse = [1,5,7,8,9]
-cantUse = [2,6]
+func = "xxxxx"
+mustUse = []
+cantUse = []
 
 variations = produceVariations(mustUse, cantUse, func)
 
 positionalConditions = [
-    (0, "9"),
-    (0, "7"),
-    (1, "9"),
-    (4, "7"),
-    (4, "8"),
-    (7, "5"),
-    (7, "1"),
 ]
+       
+sensibleEquations = list(filter(isSensible, variations))
+correctEquations = list(filter(isCorrect, sensibleEquations))
 
-validVariations = []
-for variation in variations:
-    if isValidVariation(variation, positionalConditions):
-        validVariations.append(variations)
-        print(variation)            
-        
+print(correctEquations)        
