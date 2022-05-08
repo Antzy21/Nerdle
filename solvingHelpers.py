@@ -77,6 +77,9 @@ def findSolutions(mustUse, cantUse, strFunc, func, resultLength=1, *args):
 def isSlot(c):
     return c == 'x'
             
+allOptions = list(range(1,10))
+allOptions.extend(["+","-","*","/","="])
+
 def produceVariations(mustUse: list[int], cantUse: list[int], func: str) -> list[str]:
     numSlots = len(list(filter(isSlot, func)))
     if numSlots == 0:
@@ -84,7 +87,7 @@ def produceVariations(mustUse: list[int], cantUse: list[int], func: str) -> list
     elif numSlots == len(mustUse):
         options = mustUse
     else:
-        options = list(filter(lambda x: x not in cantUse, range(1,10)))
+        options = list(filter(lambda x: x not in cantUse, allOptions))
     
     variations = []
     for n in options:
@@ -102,7 +105,7 @@ def produceVariations(mustUse: list[int], cantUse: list[int], func: str) -> list
 def isValidVariation(func: str, positionalConditions: list[tuple]) -> bool:
     eqSignIdx = func.find('=')
     if eqSignIdx == -1:
-        print("Error: no equal sign found")
+        #Error: no equal sign found
         return False
     
     for positionalCond in positionalConditions:
@@ -111,7 +114,11 @@ def isValidVariation(func: str, positionalConditions: list[tuple]) -> bool:
                 return False
     
     equation, result = func[0:eqSignIdx], func[eqSignIdx+1:len(func)]
-    result = int(result)
+    try:
+        result = int(result)
+    except:
+        #Error: rhs of equation not a number
+        return False
     
     equationList = [0]
     for c in equation:
@@ -125,7 +132,7 @@ def isValidVariation(func: str, positionalConditions: list[tuple]) -> bool:
             equationList.append(c)
     
     if len(equationList) % 2 == 0:
-        print("Error: left hand side of equation incorrect.")
+        #Error: left hand side of equation incorrect.
         return False
     
     while len(equationList) != 1:
