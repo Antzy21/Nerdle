@@ -104,7 +104,7 @@ def funcHasEqualSign(func: str) -> bool:
     eqSignIdx = func.find('=')
     return eqSignIdx != -1
     
-def rhsOfEquationIsNum(func: str) -> bool:
+def rhsIsNum(func: str) -> bool:
     eqSignIdx = func.find('=')
     result = func[eqSignIdx+1:len(func)]
     try:
@@ -112,6 +112,15 @@ def rhsOfEquationIsNum(func: str) -> bool:
         return True
     except:
         return False
+    
+def lhsHasOperation(func: str) -> bool:
+    eqSignIdx = func.find('=')
+    equation = func[0:eqSignIdx]
+    try:
+        int(equation)
+        return False
+    except:
+        return True
     
 def operationsAreSurroundedByNums(func: str) -> bool:
     for o in operations:
@@ -129,9 +138,11 @@ def operationsAreSurroundedByNums(func: str) -> bool:
 def isSensible(func: str) -> bool:
     if not funcHasEqualSign(func):
         return False
-    elif not rhsOfEquationIsNum(func):
+    elif not rhsIsNum(func):
         return False
     elif not operationsAreSurroundedByNums(func):
+        return False
+    elif not lhsHasOperation(func):
         return False
     else:
         return True
