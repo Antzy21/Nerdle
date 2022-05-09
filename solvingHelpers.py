@@ -82,7 +82,7 @@ def optionMustBeNum(func: str):
     x = func.find('x')
     if x == 0 or x == len(func):
         return True
-    if '=' in func:
+    if '=' in func and func.find('=') < x:
         return True
     try:
         int(func[x-1])
