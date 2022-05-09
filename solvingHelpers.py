@@ -94,7 +94,7 @@ def getOptions(mustUse: list[int], cantUse: list[int], numSlots, func: str) -> l
     if '=' not in func and func.find('x') == len(func)-2:
         return ['=']
     options = allOptions
-    if numSlots == len(mustUse):
+    if numSlots == len(mustUse) or (numSlots == len(mustUse)+1 and '=' not in func):
         options = mustUse
     if optionMustBeNum(func):
         options = list(filter(lambda x: x in range(1,10), options))
