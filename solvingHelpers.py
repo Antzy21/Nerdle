@@ -172,7 +172,11 @@ def isSensible(func: str) -> bool:
 def isValidWithPositionalConditions(func: str, positionalConditions: list[tuple]) -> bool:
     for positionalCond in positionalConditions:
         index = positionalCond[0]
-        if func[index] == positionalCond[1]:
+        try:
+            value = f"{positionalCond[1]}"
+        except:
+            value = positionalCond[1]
+        if func[index] == value:
             return False
     return True    
     
