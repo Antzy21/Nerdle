@@ -1,16 +1,19 @@
 from solvingHelpers import isSensible, isCorrect, isValidWithPositionalConditions, produceVariations
 
-func = "xxxxxxxx"
+func = "xxxxx=xx"
 #Example [3,6,5,'+']
-mustUse = [9,'*','-',7,5]
-cantUse = [8,6]
+mustUse = [9,7,5]
+cantUse = ['-','*',8,6]
 #Example [(0, '9'), (7, '5')]
 positionalConditions = [
-    (0,9),
-    (1,'*'),
-    (4,'-'),
+    (1,9),
+    #(2,'*'),
+    #(3,8),
+    #(4,'-'),
     (5,7),
-    (7,5)
+    #(6,7),
+    #(7,6),
+    (8,5),
 ]
 
 variations = produceVariations(mustUse, cantUse, func)
