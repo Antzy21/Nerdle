@@ -90,35 +90,38 @@ def optionMustBeNum(func: str):
     except:
         return True
 
-def getOptions(mustUse: list[int], cantUse: list[int], numSlots, func: str) -> list:
-    if '=' not in func and func.find('x') == len(func)-2:
+def getMustUse(positionalConditions: list[tuple], func: str) -> list[int]:
+    mustUseNums = map(lambda x: x[1], positionalConditions)
+    return list(set(filter(lambda x: str(x) not in func, mustUseNums)))
+
+def getOptions(positionalConditions: list[tuple], cantUse: list[int], numSlots, func: str) -> list:
+    xPos = func.find('x')
+    relevantPositonalConditions = list(filter(lambda x: x[0] == xPos+1, positionalConditions))
+    cantUseInThisPosition = list(map(lambda x: x[1], relevantPositonalConditions))
+    if '=' not in func and xPos == len(func)-2:
         return ['=']
     options = allOptions
+    mustUse = getMustUse(positionalConditions, func)
     if numSlots == len(mustUse) or (numSlots == len(mustUse)+1 and '=' not in func):
         options = mustUse
     if optionMustBeNum(func):
         options = list(filter(lambda x: x in range(1,10), options))
-    options = list(filter(lambda x: x not in cantUse, options))
+    options = list(filter(lambda x: x not in cantUse and x not in cantUseInThisPosition, options))
     return options    
 
-def produceVariations(mustUse: list[int], cantUse: list[int], func: str) -> list[str]:
+def produceVariations(positionalConditions: list[tuple], cantUse: list[int], func: str) -> list[str]:
 
     numSlots = len(list(filter(lambda c: c == 'x', func)))
     if numSlots == 0:
         return [func]
     
-    options = getOptions(mustUse, cantUse, numSlots, func)
+    options = getOptions(positionalConditions, cantUse, numSlots, func)
     
     variations = []
     for n in options:
         x = func.find('x')
-        newFunc = f"{func[0:x]}{n}{func[x+1:len(func)]}"
-        
-        newMustUse = mustUse[:]
-        if n in newMustUse:
-            newMustUse.remove(n)
-            
-        variations.extend(produceVariations(newMustUse, cantUse, newFunc))
+        newFunc = f"{func[0:x]}{n}{func[x+1:len(func)]}"            
+        variations.extend(produceVariations(positionalConditions, cantUse, newFunc))
     
     return variations
     
