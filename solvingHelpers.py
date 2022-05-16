@@ -1,3 +1,5 @@
+from functools import *
+
 alphabet = [
     'a',
     'b',
@@ -91,13 +93,15 @@ def optionMustBeNum(func: str):
         return True
 
 def getMustUse(positionalConditions: list[tuple], func: str) -> list[int]:
-    mustUseNums = map(lambda x: x[1], positionalConditions)
+    def reduceFunc(a, b):
+        a.extend(list(b))
+        return a
+    mustUseNums = reduce(reduceFunc, positionalConditions, [])
     return list(set(filter(lambda x: str(x) not in func, mustUseNums)))
 
 def getOptions(positionalConditions: list[tuple], cantUse: list[int], numSlots, func: str) -> list:
     xPos = func.find('x')
-    relevantPositonalConditions = list(filter(lambda x: x[0] == xPos+1, positionalConditions))
-    cantUseInThisPosition = list(map(lambda x: x[1], relevantPositonalConditions))
+    cantUseInThisPosition = list(positionalConditions[xPos])
     if '=' not in func and xPos == len(func)-2:
         return ['=']
     options = allOptions
@@ -173,13 +177,8 @@ def isSensible(func: str) -> bool:
         return True
     
 def isValidWithPositionalConditions(func: str, positionalConditions: list[tuple]) -> bool:
-    for positionalCond in positionalConditions:
-        index = positionalCond[0]-1
-        try:
-            value = f"{positionalCond[1]}"
-        except:
-            value = positionalCond[1]
-        if func[index] == value:
+    for positionalCond, x in zip(positionalConditions, func):
+        if x in positionalCond:
             return False
     return True    
     

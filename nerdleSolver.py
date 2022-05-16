@@ -5,6 +5,14 @@ func = "xxxxx=x3"
 cantUse = [9,7,3,1,6]
 #Example [(0, '9'), (7, '5')]
 positionalConditions = [
+    (),#1
+    (),#2
+    (),#3
+    (),#4
+    (),#5
+    (),#6
+    (),#7
+    (),#8
 ]
 
 variations = produceVariations(positionalConditions, cantUse, func)
