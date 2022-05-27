@@ -163,6 +163,9 @@ def operationsAreSurroundedByNums(func: str) -> bool:
             except:
                 return False
     return True
+  
+def containsDivideByZeros(func: str) -> bool:
+    return func.find("/0") == -1
     
 def isSensible(func: str) -> bool:
     if not funcHasEqualSign(func):
@@ -172,6 +175,8 @@ def isSensible(func: str) -> bool:
     elif not operationsAreSurroundedByNums(func):
         return False
     elif not lhsHasOperation(func):
+        return False
+    elif not containsDivideByZeros(func):
         return False
     else:
         return True
