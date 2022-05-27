@@ -168,18 +168,13 @@ def containsDivideByZeros(func: str) -> bool:
     return func.find("/0") == -1
     
 def isSensible(func: str) -> bool:
-    if not funcHasEqualSign(func):
-        return False
-    elif not rhsIsNum(func):
-        return False
-    elif not operationsAreSurroundedByNums(func):
-        return False
-    elif not lhsHasOperation(func):
-        return False
-    elif not containsDivideByZeros(func):
-        return False
-    else:
-        return True
+    return (
+        funcHasEqualSign(func) and
+        rhsIsNum(func) and
+        operationsAreSurroundedByNums(func) and
+        lhsHasOperation(func) and
+        containsDivideByZeros(func)
+    )
     
 def isValidWithPositionalConditions(func: str, positionalConditions: list[tuple]) -> bool:
     for positionalCond, x in zip(positionalConditions, func):
