@@ -21,14 +21,9 @@ print(len(variations), "variations")
 
 sensibleEquations = list(filter(isSensible, variations))
 print(len(sensibleEquations), "sensible equations")
-#print(sensibleEquations[0:100])       
+#print(sensibleEquations[0:100])
 
-def condFilter(func):
-    return isValidWithPositionalConditions(func, positionalConditions)
-filteredByPositionalConditions = list(filter(condFilter, sensibleEquations))
-print(len(filteredByPositionalConditions), "conditionaly filtered equations")
-
-correctEquations = list(filter(isCorrect, filteredByPositionalConditions))
+correctEquations = list(filter(isCorrect, sensibleEquations))
 print(len(correctEquations), "correct equations")
 for e in correctEquations:
     print(e)
