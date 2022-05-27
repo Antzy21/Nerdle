@@ -76,7 +76,7 @@ def findSolutions(mustUse, cantUse, strFunc, func, resultLength=1, *args):
             
             findSolutions(newMustUse, cantUse, strFunc, func, resultLength, newArgs)
             
-allOptions = list(range(1,10))
+allOptions = list(range(0,10))
 operations = ["+","-","*","/","="]
 allOptions.extend(operations)
 
@@ -109,7 +109,7 @@ def getOptions(positionalConditions: list[tuple], cantUse: list[int], numSlots, 
     if numSlots == len(mustUse) or (numSlots == len(mustUse)+1 and '=' not in func):
         options = mustUse
     if optionMustBeNum(func):
-        options = list(filter(lambda x: x in range(1,10), options))
+        options = list(filter(lambda x: x in range(0,10), options))
     options = list(filter(lambda x: x not in cantUse and x not in cantUseInThisPosition, options))
     return options    
 
