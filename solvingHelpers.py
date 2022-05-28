@@ -1,5 +1,7 @@
 from functools import *
 
+from numpy import number
+
 alphabet = [
     'a',
     'b',
@@ -59,7 +61,7 @@ def findSolutions(mustUse, cantUse, strFunc, func, resultLength=1, *args):
     if lenFuncParams+resultLength == len(mustUse)+len(*args):
         options = mustUse
     else:
-        options = list(filter(lambda x: x not in cantUse, range(1,10)))
+        options = list(filter(lambda x: x not in cantUse, range(0,10)))
     
     if lenFuncParams == len(*args):
         result = func(*args[0])
@@ -76,7 +78,11 @@ def findSolutions(mustUse, cantUse, strFunc, func, resultLength=1, *args):
             
             findSolutions(newMustUse, cantUse, strFunc, func, resultLength, newArgs)
             
-allOptions = list(range(0,10))
+allOptions = []
+numberOptions = list(range(0,10))
+allOptions.extend(numberOptions)
+strNumberOptions = [str(i) for i in numberOptions]
+allOptions.extend(strNumberOptions)
 operations = ["+","-","*","/","="]
 allOptions.extend(operations)
 
@@ -101,17 +107,17 @@ def getMustUse(positionalConditions: list[tuple], func: str) -> list[int]:
 
 def getOptions(positionalConditions: list[tuple], cantUse: list[int], numSlots, func: str) -> list:
     xPos = func.find('x')
-    cantUseInThisPosition = list(positionalConditions[xPos])
+    cantUseInThisPosition = positionalConditions[xPos]
     if '=' not in func and xPos == len(func)-2:
         return ['=']
     options = allOptions
     mustUse = getMustUse(positionalConditions, func)
-    if numSlots == len(mustUse) or (numSlots == len(mustUse)+1 and '=' not in func):
+    if numSlots == len(mustUse):
         options = mustUse
     if optionMustBeNum(func):
-        options = list(filter(lambda x: x in range(0,10), options))
+        options = list(filter(lambda x: x in numberOptions or x in strNumberOptions, options))
     options = list(filter(lambda x: x not in cantUse and x not in cantUseInThisPosition, options))
-    return options    
+    return options
 
 def produceVariations(positionalConditions: list[tuple], cantUse: list[int], func: str) -> list[str]:
 
