@@ -6,17 +6,18 @@ def getConstraints(attempt, func, cantUse, positionalConditions):
     print(f"\nEnter results for equation: {attempt}")
     print("--- Not used : 0 --- Used : 1 --- Used in place : 2 ---")
     for i, value in enumerate(attempt):
-        state = input(f"\nResult for {value}: ")
-        if state == "0":
-            if value not in cantUse:
-                cantUse.append(value)
-        elif state == "1":
-            positionalConditions[i].append(value)
-        elif state == "2":
-            func = func[:i] + value + func[i+1:]
-        print("func: ", func)
-        print("cantUse: ", cantUse)
-        print("posConds: ", positionalConditions)
+        if value != func[i]:
+            state = input(f"\nResult for {value}: ")
+            if state == "0":
+                if value not in cantUse:
+                    cantUse.append(value)
+            elif state == "1":
+                positionalConditions[i].append(value)
+            elif state == "2":
+                func = func[:i] + value + func[i+1:]
+            print("func: ", func)
+            print("cantUse: ", cantUse)
+            print("posConds: ", positionalConditions)
     return func, cantUse, positionalConditions
 
 def calculate(func, cantUse, positionalConditions):    
