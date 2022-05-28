@@ -15,9 +15,7 @@ def getConstraints(attempt, func, cantUse, positionalConditions):
                 positionalConditions[i].append(value)
             elif state == "2":
                 func = func[:i] + value + func[i+1:]
-            print("func: ", func)
-            print("cantUse: ", cantUse)
-            print("posConds: ", positionalConditions)
+            print("func:", func, "--- cantUse:", cantUse, "--- posConds: ", positionalConditions)
     return func, cantUse, positionalConditions
 
 def calculate(func, cantUse, positionalConditions):    
