@@ -8,7 +8,8 @@ def getConstraints(attempt, func, cantUse, positionalConditions):
     for i, value in enumerate(attempt):
         state = input(f"\nResult for {value}: ")
         if state == "0":
-            cantUse.append(value)
+            if value not in cantUse:
+                cantUse.append(value)
         elif state == "1":
             positionalConditions[i].append(value)
         elif state == "2":

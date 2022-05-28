@@ -105,6 +105,18 @@ def getMustUse(positionalConditions: list[tuple], func: str) -> list[int]:
     mustUseNums = reduce(reduceFunc, positionalConditions, [])
     return list(set(filter(lambda x: str(x) not in func, mustUseNums)))
 
+def getCantUse(cantUse, cantUseInThisPosition):
+    allCantUse = []
+    for x in cantUse:
+        try:
+            num = int(x)
+            allCantUse.append(num)
+        except:
+            pass
+        allCantUse.append(x)
+    allCantUse.extend(cantUseInThisPosition)
+    return allCantUse
+
 def getOptions(positionalConditions: list[tuple], cantUse: list[int], numSlots, func: str) -> list:
     xPos = func.find('x')
     cantUseInThisPosition = positionalConditions[xPos]
@@ -116,7 +128,7 @@ def getOptions(positionalConditions: list[tuple], cantUse: list[int], numSlots, 
         options = mustUse
     if optionMustBeNum(func):
         options = list(filter(lambda x: x in numberOptions or x in strNumberOptions, options))
-    options = list(filter(lambda x: x not in cantUse and x not in cantUseInThisPosition, options))
+    options = list(filter(lambda x: x not in getCantUse(cantUse, cantUseInThisPosition), options))
     return options
 
 def produceVariations(positionalConditions: list[tuple], cantUse: list[int], func: str) -> list[str]:
