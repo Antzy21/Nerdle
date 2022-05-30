@@ -86,18 +86,33 @@ allOptions.extend(strNumberOptions)
 operations = ["+","-","*","/","="]
 allOptions.extend(operations)
 
+def optionMustBeOperation(func: str):
+    idx = func.find('x')
+    try:
+        precedingValue = int(func[idx-1])
+        # If previous value was 0, must be an operation to avoid leading zero
+        if precedingValue == 0:
+            return True
+    except:
+        pass
+    return False
+
 def optionMustBeNum(func: str):
-    x = func.find('x')
-    if x == 0 or x == len(func):
+    idx = func.find('x')
+    # Nums must be at start and end of equation
+    if idx == 0 or idx == len(func):
         return True
-    if '=' in func and func.find('=') < x:
+    # If equals sign present, rhs must be a value made of numbers
+    if '=' in func and func.find('=') < idx:
         return True
     try:
-        int(func[x-1])
-        return False
+        # Number must preced a zero so it doesn't become a leading zero
+        if int(func[idx+1]) == 0:
+            return True
     except:
-        return True
-
+        pass
+    return False
+    
 def getMustUse(positionalConditions: list[tuple], func: str) -> list[int]:
     def reduceFunc(a, b):
         a.extend(list(b))
@@ -128,6 +143,8 @@ def getOptions(positionalConditions: list[tuple], cantUse: list[int], numSlots, 
         options = mustUse
     if optionMustBeNum(func):
         options = list(filter(lambda x: x in numberOptions or x in strNumberOptions, options))
+    elif optionMustBeOperation(func):
+        options = list(filter(lambda x: x in operations, options))
     options = list(filter(lambda x: x not in getCantUse(cantUse, cantUseInThisPosition), options))
     return options
 
