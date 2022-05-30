@@ -179,11 +179,7 @@ def isValidWithPositionalConditions(func: str, positionalConditions: list[tuple]
             return False
     return True    
     
-def isCorrect(func: str) -> bool:
-    
-    eqSignIdx = func.find('=')
-    equation, result = func[0:eqSignIdx], int(func[eqSignIdx+1:len(func)])
-    
+def calculateRhs(equation: str):
     equationList = [0]
     for c in equation:
         try:
@@ -194,7 +190,6 @@ def isCorrect(func: str) -> bool:
                 equationList.append(i)
         except:
             equationList.append(c)
-    
     while len(equationList) != 1:
         for sign in ['*', '/', '+', '-']:
             try:
@@ -217,5 +212,10 @@ def isCorrect(func: str) -> bool:
                     idx = equationList.index(sign)
                 except:
                     idx = -1
-                
-    return (equationList[0] == result)
+    return equationList[0]
+    
+def isCorrect(func: str) -> bool:
+    eqSignIdx = func.find('=')
+    equation, result = func[0:eqSignIdx], int(func[eqSignIdx+1:len(func)])
+    calculatedResult = calculateRhs(equation)
+    return (calculatedResult == result)
