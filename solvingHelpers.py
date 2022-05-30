@@ -79,23 +79,10 @@ def findSolutions(mustUse, cantUse, strFunc, func, resultLength=1, *args):
             findSolutions(newMustUse, cantUse, strFunc, func, resultLength, newArgs)
             
 allOptions = []
-numberOptions = list(range(0,10))
+numberOptions = [str(i) for i in range(0,10)]
 allOptions.extend(numberOptions)
-strNumberOptions = [str(i) for i in numberOptions]
-allOptions.extend(strNumberOptions)
 operations = ["+","-","*","/","="]
 allOptions.extend(operations)
-
-def optionMustBeOperation(func: str):
-    idx = func.find('x')
-    try:
-        precedingValue = int(func[idx-1])
-        # If previous value was 0, must be an operation to avoid leading zero
-        if precedingValue == 0:
-            return True
-    except:
-        pass
-    return False
 
 def optionMustBeNum(func: str):
     idx = func.find('x')
@@ -108,6 +95,12 @@ def optionMustBeNum(func: str):
     try:
         # Number must preced a zero so it doesn't become a leading zero
         if int(func[idx+1]) == 0:
+            return True
+    except:
+        pass
+    try:
+        # If preceding value was operation, must follow with a number
+        if func[idx-1] in operations:
             return True
     except:
         pass
@@ -133,18 +126,18 @@ def getCantUse(cantUse, cantUseInThisPosition):
     return allCantUse
 
 def getOptions(positionalConditions: list[tuple], cantUse: list[int], numSlots, func: str) -> list:
-    xPos = func.find('x')
-    cantUseInThisPosition = positionalConditions[xPos]
-    if '=' not in func and xPos == len(func)-2:
+    idx = func.find('x')
+    cantUseInThisPosition = positionalConditions[idx]
+    if '=' not in func and idx == len(func)-2:
         return ['=']
     options = allOptions
+    if idx == 0:
+        options.remove('0')
     mustUse = getMustUse(positionalConditions, func)
     if numSlots == len(mustUse):
         options = mustUse
     if optionMustBeNum(func):
-        options = list(filter(lambda x: x in numberOptions or x in strNumberOptions, options))
-    elif optionMustBeOperation(func):
-        options = list(filter(lambda x: x in operations, options))
+        options = list(filter(lambda x: x in numberOptions, options))
     options = list(filter(lambda x: x not in getCantUse(cantUse, cantUseInThisPosition), options))
     return options
 
@@ -160,6 +153,8 @@ def produceVariations(positionalConditions: list[tuple], cantUse: list[int], fun
     for n in options:
         x = func.find('x')
         newFunc = f"{func[0:x]}{n}{func[x+1:len(func)]}"            
+        if newFunc.count('x') == 6:
+            print(newFunc)
         variations.extend(produceVariations(positionalConditions, cantUse, newFunc))
     
     return variations
@@ -170,7 +165,8 @@ def isSensible(func: str) -> bool:
         rhsIsNum(func) and
         operationsAreSurroundedByNums(func) and
         lhsHasOperation(func) and
-        containsDivideByZeros(func)
+        not containsDivideByZeros(func) and
+        not containsLeadingZeros(func)
     )
     
 def isValidWithPositionalConditions(func: str, positionalConditions: list[tuple]) -> bool:

@@ -35,4 +35,11 @@ def operationsAreSurroundedByNums(func: str) -> bool:
     return True
   
 def containsDivideByZeros(func: str) -> bool:
-    return func.find("/0") == -1
+    return func.find("/0") != -1
+
+def containsLeadingZeros(func: str):
+    for idx, x in enumerate(func):
+        if x == '0':
+            if (idx == 0 or func[idx-1] in ["+","-","*","/","="]) and (idx != len(func)-1 and func[idx+1] not in ["+","-","*","/","="]):
+                return True
+    return False
