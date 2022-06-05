@@ -1,6 +1,5 @@
-from functools import *
+from functools import reduce
 from equationChecks import *
-from numpy import number
 
 alphabet = [
     'a',
