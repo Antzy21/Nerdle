@@ -1,5 +1,5 @@
 from functools import reduce
-from equationChecks import *
+from equation_checks import *
 
 alphabet = [
     'a',

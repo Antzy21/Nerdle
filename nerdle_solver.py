@@ -1,6 +1,6 @@
 import sys
 from functools import reduce
-from solvingHelpers import isSensible, isCorrect, produceVariations
+from solving_helpers import isSensible, isCorrect, produceVariations
 
 def getConstraints(attempt, func, cantUse, positionalConditions):
     print(f"\nEnter results for equation: {attempt}")
