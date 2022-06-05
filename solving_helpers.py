@@ -60,7 +60,7 @@ def get_options(
         return ['=']
     options = all_options
     if idx == 0:
-        options.remove('0')
+        options = list(filter(lambda x: x not in [0, '0'], options))
     must_use = get_must_use(positional_conditions, func)
     if num_slots == len(must_use):
         options = must_use
