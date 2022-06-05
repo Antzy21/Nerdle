@@ -1,89 +1,13 @@
 from functools import reduce
-from equation_checks import *
+import equation_checks as checks
 
-alphabet = [
-    'a',
-    'b',
-    'c',
-    'd',
-    'e',
-    'f',
-    'g',
-    'h',
-    'i',
-    'j',
-    'k',
-    'l',
-    'm',
-    'n',
-    'o',
-    'p',
-    'q',
-    't',
-    'u',
-    'x',
-    'y',
-    'z',
-]
-
-def addToArgs(args : list[int], i : int) -> tuple[int] :
-    lst = list(*args)
-    lst.append(i)
-    return(tuple(lst))
-
-def createResult(
-    options : list[int],
-    length: int,
-    currentValue: int =0
-    ) -> list[int]:
-    variations = []
-    for i in options:
-        newValue = currentValue*10+i
-        if length == 1:
-            variations.append(newValue)
-        else:            
-            newoptions = options[:]
-            newoptions.remove(i)
-            variations.extend(createResult(newoptions, length-1, newValue))
-    return variations
-            
-def findSolutions(mustUse, cantUse, strFunc, func, resultLength=1, *args):
-    
-    # Error handling:
-    for numList in [mustUse, cantUse]:
-        for n in numList:
-            if not 0<n<10:
-                print("Error: number lists invalid")
-                return
-    
-    lenFuncParams = len(func.__code__.co_varnames)
-    if lenFuncParams+resultLength == len(mustUse)+len(*args):
-        options = mustUse
-    else:
-        options = list(filter(lambda x: x not in cantUse, range(0,10)))
-    
-    if lenFuncParams == len(*args):
-        result = func(*args[0])
-        for i in createResult(options, resultLength):
-            if result == i:
-                print(strFunc(i,*args[0]))
-    else:
-        for i in options:
-            newArgs = addToArgs(args, i)            
-            
-            newMustUse = mustUse[:]
-            if i in newMustUse:
-                newMustUse.remove(i)
-            
-            findSolutions(newMustUse, cantUse, strFunc, func, resultLength, newArgs)
-            
-allOptions = []
-numberOptions = [str(i) for i in range(0,10)]
-allOptions.extend(numberOptions)
+all_options = []
+number_options = [str(i) for i in range(0,10)]
+all_options.extend(number_options)
 operations = ["+","-","*","/","="]
-allOptions.extend(operations)
+all_options.extend(operations)
 
-def optionMustBeNum(func: str):
+def option_must_be_num(func: str):
     idx = func.find('x')
     # Nums must be at start and end of equation
     if idx == 0 or idx == len(func):
@@ -104,113 +28,123 @@ def optionMustBeNum(func: str):
     except ValueError:
         pass
     return False
-    
-def getMustUse(positionalConditions: list[tuple], func: str) -> list[int]:
-    def reduceFunc(a, b):
-        a.extend(list(b))
-        return a
-    mustUseNums = reduce(reduceFunc, positionalConditions, [])
-    return list(set(filter(lambda x: str(x) not in func, mustUseNums)))
 
-def getCantUse(cantUse, cantUseInThisPosition):
-    allCantUse = []
-    for x in cantUse:
+def get_must_use(positional_conditions: list[tuple], func: str) -> list[int]:
+    def reduce_func(list_a, list_b):
+        list_a.extend(list(list_b))
+        return list_a
+    must_use_nums = reduce(reduce_func, positional_conditions, [])
+    return list(set(filter(lambda x: str(x) not in func, must_use_nums)))
+
+def get_cant_use(cant_use, cant_use_in_this_position):
+    all_cant_use = []
+    for value in cant_use:
         try:
-            num = int(x)
-            allCantUse.append(num)
+            num = int(value)
+            all_cant_use.append(num)
         except ValueError:
             pass
-        allCantUse.append(x)
-    allCantUse.extend(cantUseInThisPosition)
-    return allCantUse
+        all_cant_use.append(value)
+    all_cant_use.extend(cant_use_in_this_position)
+    return all_cant_use
 
-def getOptions(positionalConditions: list[tuple], cantUse: list[int], numSlots, func: str) -> list:
+def get_options(
+    positional_conditions: list[tuple],
+    cant_use: list[int],
+    num_slots, func: str
+    ) -> list:
+
     idx = func.find('x')
-    cantUseInThisPosition = positionalConditions[idx]
+    cant_use_in_this_position = positional_conditions[idx]
     if '=' not in func and idx == len(func)-2:
         return ['=']
-    options = allOptions
+    options = all_options
     if idx == 0:
         options.remove('0')
-    mustUse = getMustUse(positionalConditions, func)
-    if numSlots == len(mustUse):
-        options = mustUse
-    if optionMustBeNum(func):
-        options = list(filter(lambda x: x in numberOptions, options))
-    options = list(filter(lambda x: x not in getCantUse(cantUse, cantUseInThisPosition), options))
+    must_use = get_must_use(positional_conditions, func)
+    if num_slots == len(must_use):
+        options = must_use
+    if option_must_be_num(func):
+        options = list(filter(lambda x: x in number_options, options))
+    filter_cant_use = lambda x: x not in get_cant_use(cant_use, cant_use_in_this_position)
+    options = list(filter(filter_cant_use, options))
     return options
 
-def produceVariations(positionalConditions: list[tuple], cantUse: list[int], func: str) -> list[str]:
+def produce_variations(
+    positional_conditions: list[tuple],
+    cant_use: list[int],
+    func: str
+    ) -> list[str]:
 
-    numSlots = len(list(filter(lambda c: c == 'x', func)))
-    if numSlots == 0:
+    num_slots = len(list(filter(lambda c: c == 'x', func)))
+    if num_slots == 0:
         return [func]
-    
-    options = getOptions(positionalConditions, cantUse, numSlots, func)
-    
+
+    options = get_options(positional_conditions, cant_use, num_slots, func)
+
     variations = []
-    for n in options:
-        x = func.find('x')
-        newFunc = f"{func[0:x]}{n}{func[x+1:len(func)]}"            
-        if newFunc.count('x') == 6:
-            print(newFunc)
-        variations.extend(produceVariations(positionalConditions, cantUse, newFunc))
-    
+    for option in options:
+        unknowns = func.find('x')
+        new_func = f"{func[0:unknowns]}{option}{func[unknowns+1:len(func)]}"
+        if new_func.count('x') == 6:
+            print(new_func)
+        variations.extend(produce_variations(positional_conditions, cant_use, new_func))
+
     return variations
-    
-def isSensible(func: str) -> bool:
+
+def is_sensible(func: str) -> bool:
     return (
-        funcHasEqualSign(func) and
-        rhsIsNum(func) and
-        operationsAreSurroundedByNums(func) and
-        lhsHasOperation(func) and
-        not containsDivideByZeros(func) and
-        not containsLeadingZeros(func)
+        checks.func_has_equal_sign(func) and
+        checks.rhs_is_num(func) and
+        checks.operations_are_surrounded_by_nums(func) and
+        checks.lhs_has_operation(func) and
+        not checks.contains_divide_by_zeros(func) and
+        not checks.contains_leading_zeros(func)
     )
-    
-def isValidWithPositionalConditions(func: str, positionalConditions: list[tuple]) -> bool:
-    for positionalCond, x in zip(positionalConditions, func):
-        if x in positionalCond:
+
+def is_valid_with_positional_conditions(func: str, positional_conditions: list[tuple]) -> bool:
+    for positional_cond, value in zip(positional_conditions, func):
+        if value in positional_cond:
             return False
-    return True    
-    
-def calculateRhs(equation: str):
-    equationList = [0]
-    for c in equation:
+    return True
+
+def calculate_rhs(equation: str):
+    equation_list = [0]
+    for value in equation:
         try:
-            i = int(c)
-            if type(equationList[-1]) is int:
-                equationList[-1] = equationList[-1]*10+i
+            i = int(value)
+            if isinstance(equation_list[-1], int):
+                equation_list[-1] = equation_list[-1]*10+i
             else:
-                equationList.append(i)
+                equation_list.append(i)
         except ValueError:
-            equationList.append(c)
-    while len(equationList) != 1:
+            equation_list.append(value)
+    while len(equation_list) != 1:
         for sign in ['*', '/', '+', '-']:
             try:
-                idx = equationList.index(sign)
+                idx = equation_list.index(sign)
             except ValueError:
                 idx = -1
             while idx != -1:
                 if sign == '*':
-                    value = equationList[idx-1] * equationList[idx+1]
+                    value = equation_list[idx-1] * equation_list[idx+1]
                 if sign == '/':
-                    value = equationList[idx-1] / equationList[idx+1]
+                    value = equation_list[idx-1] / equation_list[idx+1]
                 if sign == '+':
-                    value = equationList[idx-1] + equationList[idx+1]
+                    value = equation_list[idx-1] + equation_list[idx+1]
                 if sign == '-':
-                    value = equationList[idx-1] - equationList[idx+1]
-                equationList[idx] = value
-                equationList.pop(idx-1)
-                equationList.pop(idx)
+                    value = equation_list[idx-1] - equation_list[idx+1]
+                equation_list[idx] = value
+                equation_list.pop(idx-1)
+                equation_list.pop(idx)
                 try:
-                    idx = equationList.index(sign)
+                    idx = equation_list.index(sign)
                 except ValueError:
                     idx = -1
-    return equationList[0]
-    
-def isCorrect(func: str) -> bool:
-    eqSignIdx = func.find('=')
-    equation, result = func[0:eqSignIdx], int(func[eqSignIdx+1:len(func)])
-    calculatedResult = calculateRhs(equation)
-    return (calculatedResult == result)
+    return equation_list[0]
+
+def is_correct(func: str) -> bool:
+    idx = func.find('=')
+    equation, result = func[0:idx], int(func[idx+1:len(func)])
+    calculated_result = calculate_rhs(equation)
+    return calculated_result == result
