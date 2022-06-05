@@ -95,13 +95,13 @@ def optionMustBeNum(func: str):
         # Number must preced a zero so it doesn't become a leading zero
         if int(func[idx+1]) == 0:
             return True
-    except:
+    except ValueError:
         pass
     try:
         # If preceding value was operation, must follow with a number
         if func[idx-1] in operations:
             return True
-    except:
+    except ValueError:
         pass
     return False
     
@@ -118,7 +118,7 @@ def getCantUse(cantUse, cantUseInThisPosition):
         try:
             num = int(x)
             allCantUse.append(num)
-        except:
+        except ValueError:
             pass
         allCantUse.append(x)
     allCantUse.extend(cantUseInThisPosition)
@@ -183,13 +183,13 @@ def calculateRhs(equation: str):
                 equationList[-1] = equationList[-1]*10+i
             else:
                 equationList.append(i)
-        except:
+        except ValueError:
             equationList.append(c)
     while len(equationList) != 1:
         for sign in ['*', '/', '+', '-']:
             try:
                 idx = equationList.index(sign)
-            except:
+            except ValueError:
                 idx = -1
             while idx != -1:
                 if sign == '*':
@@ -205,7 +205,7 @@ def calculateRhs(equation: str):
                 equationList.pop(idx)
                 try:
                     idx = equationList.index(sign)
-                except:
+                except ValueError:
                     idx = -1
     return equationList[0]
     

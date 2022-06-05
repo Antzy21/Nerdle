@@ -1,4 +1,3 @@
-
 def funcHasEqualSign(func: str) -> bool:
     eqSignIdx = func.find('=')
     return eqSignIdx != -1
@@ -9,7 +8,7 @@ def rhsIsNum(func: str) -> bool:
     try:
         result = int(result)
         return True
-    except:
+    except ValueError:
         return False
     
 def lhsHasOperation(func: str) -> bool:
@@ -18,7 +17,7 @@ def lhsHasOperation(func: str) -> bool:
     try:
         int(equation)
         return False
-    except:
+    except ValueError:
         return True
     
 def operationsAreSurroundedByNums(func: str) -> bool:
@@ -30,7 +29,7 @@ def operationsAreSurroundedByNums(func: str) -> bool:
             try:
                 int(func[oPos-1])
                 int(func[oPos+1])
-            except:
+            except ValueError:
                 return False
     return True
   
