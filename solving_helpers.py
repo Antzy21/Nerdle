@@ -27,6 +27,12 @@ def option_must_be_num(func: str):
             return True
     except ValueError:
         pass
+    try:
+        # If following value is operation, must precede with a number
+        if func[idx+1] in operations:
+            return True
+    except ValueError:
+        pass
     return False
 
 def get_must_use(positional_conditions: list[tuple], func: str) -> list[int]:
@@ -48,6 +54,12 @@ def get_cant_use(cant_use, cant_use_in_this_position):
     all_cant_use.extend(cant_use_in_this_position)
     return all_cant_use
 
+def list_contains_item_from_list(list_a, list_b):
+    for item in list_b:
+        if item in list_a:
+            return True
+    return False
+
 def get_options(
     positional_conditions: list[tuple],
     cant_use: list[int],
@@ -55,17 +67,28 @@ def get_options(
     ) -> list:
 
     idx = func.find('x')
+    eq_idx = func.find('=')
     cant_use_in_this_position = positional_conditions[idx]
-    if '=' not in func and idx == len(func)-2:
-        return ['=']
+    must_use = get_must_use(positional_conditions, func)
     options = all_options
+
+    if '=' in func:
+        if list_contains_item_from_list(must_use, operations):
+            if idx > eq_idx:
+                return []
+            elif idx + 2 == eq_idx:
+                options = list(filter(lambda x: x in must_use and x in operations, options))
+    else:
+        if idx == len(func)-2:
+            return ['=']
     if idx == 0:
         options = list(filter(lambda x: x not in [0, '0'], options))
-    must_use = get_must_use(positional_conditions, func)
     if num_slots == len(must_use):
         options = must_use
     if option_must_be_num(func):
         options = list(filter(lambda x: x in number_options, options))
+    if func[idx-1] == '0':
+        options = list(filter(lambda x: x in operations, options))
     filter_cant_use = lambda x: x not in get_cant_use(cant_use, cant_use_in_this_position)
     options = list(filter(filter_cant_use, options))
     return options
