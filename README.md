@@ -19,10 +19,13 @@ func: xxxxxxxx --- cant_use: ['*'] --- posConds:  [['9'], [], [], [], [], [], []
 
 Result for 8: 1
 func: xxxxxxxx --- cant_use: ['*'] --- posConds:  [['9'], [], ['8'], [], [], [], [], []]
+
+...
 ```
+
 Calling with no parameters will assume that  `9*8-7=65` is used as the initial input.
 
 Any args passed after that will be interpreted as equations to be analysed one at a time. e.g.
-```
+```powershell
 Python .\nerdle_solver.py 12+34=46 6/3+9=11
 ```
